@@ -1,0 +1,21 @@
+#include <iostream>
+#include <array>
+
+void fillArray(std::array<int, 7>& arr, int value) {
+    for (int i = 0; i < arr.size(); ++i) {
+        arr[i] = value;
+    }
+}
+
+int main() {
+    std::array<int, 7> arr;
+
+    fillArray(arr, 44);
+
+    for (int i = 0; i < arr.size(); ++i) {
+        std::cout << arr[i] << " ";
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
