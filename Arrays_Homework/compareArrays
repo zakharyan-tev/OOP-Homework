@@ -1,0 +1,24 @@
+#include <iostream>
+#include <array>
+
+template <typename T, size_t N>
+bool compareArrays(const std::array<T, N>& arr1, const std::array<T, N>& arr2) {
+    for (size_t i = 0; i < N; ++i) {
+        if (arr1[i] != arr2[i]) {
+            return false;
+        }
+    }
+    return true; 
+}
+
+int main() {
+    std::array<int, 5> arr1 = {1, 2, 3, 4, 5};
+    std::array<int, 5> arr2 = {1, 2, 3, 4, 5};
+    std::array<int, 5> arr3 = {5, 4, 3, 2, 1};
+
+    std::cout << "arr1 == arr2? " << (compareArrays(arr1, arr2) ? "true" : "false") << std::endl;
+    std::cout << "arr1 == arr3? " << (compareArrays(arr1, arr3) ? "true" : "false") << std::endl;
+
+    return 0;
+}
+
