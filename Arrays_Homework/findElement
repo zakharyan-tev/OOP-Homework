@@ -1,0 +1,24 @@
+#include <iostream>
+#include <array>
+
+template <typename T, size_t N>
+int findElement(const std::array<T, N>& arr, const T& value) {
+    for (size_t i = 0; i < arr.size(); ++i) {
+        if (arr[i] == value) {
+            return static_cast<int>(i);
+        }
+    }
+    return -1;
+}
+
+int main() {
+    std::array<int, 5> arr = {10, 20, 30, 40, 50};
+
+    int index = findElement(arr, 30);
+    std::cout << "Index of 30: " << index << std::endl;
+
+    index = findElement(arr, 100);
+    std::cout << "Index of 100: " << index << std::endl;
+
+    return 0;
+}
