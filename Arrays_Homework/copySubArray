@@ -1,0 +1,33 @@
+#include <iostream>
+#include <array>
+
+template <typename T, size_t N, size_t M>
+std::array<T, M> copySubArray(const std::array<T, N>& source, size_t startIndex, size_t count) {
+    std::array<T, M> result{};
+
+    if (startIndex + count > N) {
+        count = N - startIndex;
+    }
+    if (count > M) {
+        count = M; 
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        result[i] = source[startIndex + i];
+    }
+
+    return result;
+}
+
+int main() {
+    std::array<int, 10> source = {1,2,3,4,5,6,7,8,9,10};
+
+    std::array<int, 5> sub = copySubArray<int, 10, 5>(source, 2, 5);
+
+    for (size_t i = 0; i < sub.size(); ++i) {
+        std::cout << sub[i] << " ";
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
