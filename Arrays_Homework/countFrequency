@@ -1,0 +1,24 @@
+#include <iostream>
+#include <array>
+
+template <std::size_t N>
+std::array<int, 256> countFrequency(const std::array<char, N>& arr) {
+    std::array<int, 256> freq{};
+
+    for (std::size_t i = 0; i < N; ++i) {
+        unsigned char c = arr[i];
+        freq[c]++; 
+    }
+
+    return freq;
+}
+
+int main() {
+    std::array<char, 5> text = {'h', 'e', 'l', 'l', 'o'};
+    auto freq = countFrequency<5>(text);
+
+    std::cout << "h: " << freq['h'] << "\n";
+    std::cout << "e: " << freq['e'] << "\n";
+    std::cout << "l: " << freq['l'] << "\n";
+    std::cout << "o: " << freq['o'] << "\n";
+}
