@@ -1,0 +1,57 @@
+#include <iostream>
+
+struct ListNode {
+    int data; /*should be only 1 or 0*/
+    ListNode* next;
+
+    explicit ListNode(int val) : data(val), next(nullptr) {}
+};
+
+int binaryToDecimal(ListNode* head) {
+    int result = 0;
+    while (head != nullptr) {
+        result = result * 2 + head->data;
+        head = head->next;
+    }
+    return result;
+}
+
+ListNode* createList(int first) {
+    return new ListNode(first);
+}
+
+template <typename... Args>
+ListNode* createList(int first, Args... args) {
+    ListNode* head = new ListNode(first);
+    head->next = createList(args...);
+    return head;
+}
+
+void printList(ListNode* head) {
+    while (head) {
+        std::cout << head->data << " ";
+        head = head->next;
+    }
+    std::cout << std::endl;
+}
+
+void deleteList(ListNode* head) {
+    while (head) {
+        ListNode* temp = head;
+        head = head->next;
+        delete temp;
+    }
+}
+
+int main() {
+    ListNode* head = createList(1, 0, 0, 1);
+
+    std::cout << "Binary list: ";
+    printList(head);
+
+    int decimal = binaryToDecimal(head);
+    std::cout << "Decimal value: " << decimal << std::endl;
+
+    deleteList(head);
+    return 0;
+}
