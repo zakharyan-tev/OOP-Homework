@@ -1,0 +1,158 @@
+#include <iostream>
+#include <deque>
+#include <vector>
+#include <utility>
+#include <random>
+#include <unordered_set>
+#include <string>
+
+class SnakeGame {
+public:
+    SnakeGame(int width, int height, int startY, int startX)
+        : width(width), height(height), rng(rd()), foodY(-1), foodX(-1)
+    {
+        if (startY < 0) startY = 0;
+        if (startY >= height) startY = height - 1;
+        if (startX < 0) startX = 0;
+        if (startX >= width)  startX = width - 1;
+
+        body.clear();
+        body.emplace_front(startY, startX);
+        occupied.clear();
+        occupied.insert(encode(startY, startX));
+
+        spawnFood();
+    }
+
+    void moveUp()    { moveTo(headY() - 1, headX()); }
+    void moveDown()  { moveTo(headY() + 1, headX()); }
+    void moveLeft()  { moveTo(headY(), headX() - 1); }
+    void moveRight() { moveTo(headY(), headX() + 1); }
+
+    void print() const {
+        std::vector<std::string> grid(height, std::string(width, '.'));
+
+        // place food
+        if (hasFood()) grid[foodY][foodX] = '*';
+
+        // place body: tail->...->head but we must mark head as '@'
+        bool first = true;
+        for (const auto &seg : body) {
+            int y = seg.first, x = seg.second;
+            if (first) {
+                grid[y][x] = '@';
+                first = false;
+            } else {
+                grid[y][x] = 'O';
+            }
+        }
+
+        for (int y = 0; y < height; ++y) {
+            std::cout << grid[y] << '\n';
+        }
+    }
+
+    void spawnFood() {
+        std::vector<std::pair<int,int>> freeCells;
+        freeCells.reserve(width * height);
+
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; ++x) {
+                if (occupied.find(encode(y,x)) == occupied.end()) {
+                    freeCells.emplace_back(y,x);
+                }
+            }
+        }
+
+        if (freeCells.empty()) {
+            foodY = foodX = -1;
+            return;
+        }
+
+        std::uniform_int_distribution<size_t> dist(0, freeCells.size() - 1);
+        auto p = freeCells[dist(rng)];
+        foodY = p.first;
+        foodX = p.second;
+    }
+
+private:
+    int width;
+    int height;
+    std::deque<std::pair<int,int>> body;
+    std::unordered_set<int> occupied; // encoded positions y*width + x
+    int foodY, foodX;
+
+    std::random_device rd;
+    std::mt19937 rng;
+
+    inline int encode(int y, int x) const { return y * width + x; }
+    inline int headY() const { return body.front().first; }
+    inline int headX() const { return body.front().second; }
+    inline bool hasFood() const { return foodY >= 0 && foodX >= 0; }
+
+    void moveTo(int newY, int newX) {
+        if (newY < 0 || newY >= height || newX < 0 || newX >= width) {
+            std::cout << "Move blocked: out of bounds (" << newY << ", " << newX << ")\n";
+            return;
+        }
+
+        int newCode = encode(newY, newX);
+
+        bool eating = hasFood() && newY == foodY && newX == foodX;
+
+        // If not eating, tail will be removed — allow moving into tail position.
+        int tailCode = -1;
+        if (!eating && !body.empty()) {
+            auto tail = body.back();
+            tailCode = encode(tail.first, tail.second);
+        }
+
+        if (occupied.find(newCode) != occupied.end() && newCode != tailCode) {
+            std::cout << "Move blocked: collision with body at (" << newY << ", " << newX << ")\n";
+            return;
+        }
+
+        // add new head
+        body.emplace_front(newY, newX);
+        occupied.insert(newCode);
+
+        if (eating) {
+            // consume food and spawn a new one
+            foodY = foodX = -1;
+            spawnFood();
+        } else {
+            // remove tail
+            auto tail = body.back();
+            int tailEnc = encode(tail.first, tail.second);
+            body.pop_back();
+            occupied.erase(tailEnc);
+        }
+    }
+};
+
+int main() {
+    SnakeGame game(10, 6, 2, 4);
+
+    std::cout << "Initial state:\n";
+    game.print();
+    std::cout << "------\n";
+
+    game.moveRight();
+    std::cout << "After moveRight():\n";
+    game.print();
+    std::cout << "------\n";
+
+    game.moveDown();
+    std::cout << "After moveDown():\n";
+    game.print();
+    std::cout << "------\n";
+
+    for (int i = 0; i < 10; ++i) {
+        game.moveRight();
+    }
+    std::cout << "After several moveRight():\n";
+    game.print();
+    std::cout << "------\n";
+
+    return 0;
+}
