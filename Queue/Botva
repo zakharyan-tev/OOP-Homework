@@ -1,0 +1,46 @@
+int main()
+{
+    std::queue<int> p1;
+    for (int i = 0; i < 5; i++) {
+        int val;
+        std::cin >> val;
+        p1.push(val);
+    }
+
+    std::queue<int> p2;
+    for (int i = 0; i < 5; i++) {
+        int val;
+        std::cin >> val;
+        p2.push(val);
+    }
+
+    int rounds = 0;
+    const int MAX_ROUNDS = 1000000;
+
+    while (!p1.empty() && p2.empty() && rounds < MAX_ROUNDS) {
+        rounds++;
+
+        int card1 = p1.front();
+        p1.pop();
+        int card2 = p2.front();
+        p2.pop();
+
+        if (card1 < card2 || card1 == 0 && card2 == 9) {
+            p2.push(card2);
+            p2.push(card1);
+        }
+        else {
+            p1.push(card1);
+            p1.push(card2);
+        }
+    }
+    if (rounds >= MAX_ROUNDS) {
+        std::cout << "botva" << std::endl;
+    }
+    else if (p1.empty()) {
+        std::cout << "second " << rounds << std::endl;
+    }
+    else {
+        std::cout << "first " << rounds << std::endl;
+    }
+}
