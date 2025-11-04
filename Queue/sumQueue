@@ -1,0 +1,23 @@
+#include <iostream>
+#include <queue>
+
+int sumQueue(std::queue<int> q) {
+    int sum = 0;
+
+    while (!q.empty()) {
+        sum += q.front();
+        q.pop();
+    }
+
+    return sum;
+}
+
+int main() {
+    std::queue<int> q;
+    q.push(10);
+    q.push(20);
+    q.push(30);
+
+    std::cout << "Sum: " << sumQueue(q) << '\n';
+    return 0;
+}
