@@ -1,0 +1,108 @@
+#include <iostream>
+#include <forward_list>
+#include <utility>
+#include <cmath>
+#include <sstream>
+
+class Polynomial {
+public:
+    std::forward_list<std::pair<int,double>> terms;
+
+    Polynomial() = default;
+
+    void addTerm(int degree, double coefficient) {
+        if (coefficient == 0.0) return;
+        auto prev = terms.before_begin();
+        auto it = terms.begin();
+        while (it != terms.end() && it->first > degree) {
+            ++prev;
+            ++it;
+        }
+        if (it != terms.end() && it->first == degree) {
+            it->second += coefficient;
+            if (it->second == 0.0) {
+                terms.erase_after(prev);
+            }
+        } else {
+            terms.insert_after(prev, std::make_pair(degree, coefficient));
+        }
+    }
+
+    double evaluate(double x) const {
+        double result = 0.0;
+        for (const auto& term : terms) {
+            result += term.second * std::pow(x, term.first);
+        }
+        return result;
+    }
+
+    Polynomial derivative() const {
+        Polynomial dp;
+        for (const auto& term : terms) {
+            if (term.first > 0) {
+                dp.addTerm(term.first - 1, term.second * term.first);
+            }
+        }
+        return dp;
+    }
+
+    void print(std::ostream& out = std::cout) const {
+        if (terms.begin() == terms.end()) {
+            out << "0";
+            return;
+        }
+
+        bool firstPrinted = false;
+        for (const auto& term : terms) {
+            int deg = term.first;
+            double coef = term.second;
+            if (coef == 0.0) continue;
+            if (!firstPrinted) {
+                if (coef < 0) out << "-";
+            } else {
+                out << (coef < 0 ? " - " : " + ");
+            }
+            double absCoef = std::abs(coef);
+            bool skipCoef = (deg > 0) && (std::floor(absCoef) == absCoef) && (static_cast<long long>(absCoef) == 1);
+            if (!skipCoef) {
+                if (std::floor(absCoef) == absCoef) {
+                    out << static_cast<long long>(absCoef);
+                } else {
+                    std::ostringstream oss;
+                    oss.precision(6);
+                    oss << absCoef;
+                    out << oss.str();
+                }
+            }
+            if (deg > 0) {
+                out << "x";
+                if (deg != 1) out << "^" << deg;
+            }
+            firstPrinted = true;
+        }
+        if (!firstPrinted) out << "0";
+    }
+};
+
+int main() {
+    Polynomial p;
+    p.addTerm(2, 3.0);
+    p.addTerm(0, 5.0);
+    p.addTerm(1, -2.0);
+    std::cout << "p(x) = ";
+    p.print();
+    std::cout << std::endl;
+
+    double val = p.evaluate(2.0);
+    std::cout << "p(2) = " << val << std::endl;
+
+    Polynomial dp = p.derivative();
+    dp.print();
+    std::cout << std::endl;
+
+    p.addTerm(1, 2.0);
+    p.print();
+    std::cout << std::endl;
+
+    return 0;
+}
