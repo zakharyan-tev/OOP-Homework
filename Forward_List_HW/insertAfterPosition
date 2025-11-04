@@ -1,0 +1,29 @@
+#include <iostream>
+#include <forward_list>
+
+bool insertAfterPosition(std::forward_list<int>& lst, int position, int value) {
+    auto it = lst.begin();
+    if (it == lst.end()) return false;
+    for (int i = 0; i < position; ++i) {
+        ++it;
+        if (it == lst.end()) return false;
+    }
+    lst.insert_after(it, value);
+    return true;
+}
+
+int main() {
+    std::forward_list<int> fl = {1, 2, 3, 4};
+    if (insertAfterPosition(fl, 1, 99)) {
+        std::cout << "Done\n";
+    } else {
+        std::cout << "Error: no pos\n";
+    }
+
+    for (int x : fl) {
+        std::cout << x << " ";
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
