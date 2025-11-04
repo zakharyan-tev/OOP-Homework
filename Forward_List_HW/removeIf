@@ -1,0 +1,33 @@
+#include <iostream>
+#include <forward_list>
+#include <functional>
+
+int removeIf(std::forward_list<int>& lst, std::function<bool(int)> predicate) {
+    int before = 0;
+    for (int x : lst) ++before;
+
+    lst.remove_if(predicate);
+
+    int after = 0;
+    for (int x : lst) ++after;
+
+    return before - after;
+}
+
+bool isOdd(int x) { return x % 2 != 0; }
+
+int main() {
+    std::forward_list<int> fl = {1, 2, 3, 4, 5, 6};
+
+    int removed = removeIf(fl, isOdd);
+
+    std::cout << "El removed: " << removed << std::endl;
+
+    std::cout << "After remove: ";
+    for (int x : fl) {
+        std::cout << x << " ";
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
