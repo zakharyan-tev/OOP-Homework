@@ -1,0 +1,32 @@
+#include <iostream>
+#include <forward_list>
+
+void printList(const std::forward_list<int>& lst) {
+    for (int x : lst) std::cout << x << " ";
+    std::cout << std::endl;
+}
+
+void insertionSort(std::forward_list<int>& lst) {
+    if (lst.empty() || lst.begin() == lst.end()) return;
+
+    std::forward_list<int> sorted;
+    for (int val : lst) {
+        auto prev = sorted.before_begin();
+        auto it = sorted.begin();
+
+        while (it != sorted.end() && *it < val) {
+            ++prev;
+            ++it;
+        }
+        sorted.insert_after(prev, val);
+        printList(sorted);
+    }
+    lst = std::move(sorted);
+}
+
+int main() {
+    std::forward_list<int> fl = {5, 2, 8, 1, 9};
+    insertionSort(fl);
+    printList(fl);
+    return 0;
+}
