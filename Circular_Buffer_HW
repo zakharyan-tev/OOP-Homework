@@ -1,0 +1,121 @@
+#include <iostream>
+#include <stdexcept>
+
+template <typename T>
+class CircularDeque {
+private:
+    T* buffer;
+    int capacity;
+    int size;
+    int frontIdx;
+    int rearIdx;
+
+    void resize() {
+        int newCapacity = (capacity == 0 ? 1 : capacity * 2);
+        T* newBuffer = new T[newCapacity];
+        for (int i = 0; i < size; ++i)
+            newBuffer[i] = (*this)[i];
+        delete[] buffer;
+        buffer = newBuffer;
+        capacity = newCapacity;
+        frontIdx = 0;
+        rearIdx = size - 1;
+    }
+
+public:
+    CircularDeque(int initialSize = 0)
+        : capacity(initialSize > 0 ? initialSize : 1),
+          size(0), frontIdx(0), rearIdx(-1)
+    {
+        buffer = new T[capacity];
+    }
+
+    ~CircularDeque() {
+        delete[] buffer;
+    }
+
+    bool isEmpty() const {
+        return size == 0;
+    }
+
+    int getSize() const {
+        return size;
+    }
+
+    void push_back(const T& value) {
+        if (size == capacity) resize();
+        rearIdx = (rearIdx + 1) % capacity;
+        buffer[rearIdx] = value;
+        ++size;
+    }
+
+    void push_front(const T& value) {
+        if (size == capacity) resize();
+        frontIdx = (frontIdx - 1 + capacity) % capacity;
+        buffer[frontIdx] = value;
+        ++size;
+    }
+
+    T pop_front() {
+        if (isEmpty()) throw std::out_of_range("Deque is empty");
+        T val = buffer[frontIdx];
+        frontIdx = (frontIdx + 1) % capacity;
+        --size;
+        return val;
+    }
+
+    T pop_back() {
+        if (isEmpty()) throw std::out_of_range("Deque is empty");
+        T val = buffer[rearIdx];
+        rearIdx = (rearIdx - 1 + capacity) % capacity;
+        --size;
+        return val;
+    }
+
+    T front() const {
+        if (isEmpty()) throw std::out_of_range("Deque is empty");
+        return buffer[frontIdx];
+    }
+
+    T back() const {
+        if (isEmpty()) throw std::out_of_range("Deque is empty");
+        return buffer[rearIdx];
+    }
+
+    T& operator[](int index) {
+        if (index < 0 || index >= size) throw std::out_of_range("Index out of range");
+        return buffer[(frontIdx + index) % capacity];
+    }
+
+    const T& operator[](int index) const {
+        if (index < 0 || index >= size) throw std::out_of_range("Index out of range");
+        return buffer[(frontIdx + index) % capacity];
+    }
+};
+
+int main() {
+    CircularDeque<int> dq;
+    std::cout << "Is empty: " << std::boolalpha << dq.isEmpty() << '\n';
+    std::cout << "Size: " << dq.getSize() << '\n';
+
+    dq.push_back(20);
+    dq.push_back(30);
+    dq.push_front(10);
+    std::cout << "Size: " << dq.getSize() << '\n';
+
+    std::cout << "Front: " << dq.front() << '\n';
+    std::cout << "Back: " << dq.back() << '\n';
+
+    int val = dq.pop_front();
+    std::cout << "Popped: " << val << '\n';
+    std::cout << "Size: " << dq.getSize() << '\n';
+
+    dq.push_back(40);
+    dq.push_back(50);
+
+    std::cout << dq[0] << " " << dq[1] << " " << dq[2] << '\n';
+    dq[1] = 25;
+    std::cout << dq[1] << '\n';
+
+    return 0;
+}
