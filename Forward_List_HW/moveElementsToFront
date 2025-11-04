@@ -1,0 +1,36 @@
+#include <iostream>
+#include <forward_list>
+
+void moveElementsToFront(std::forward_list<int>& lst, int value) {
+    std::forward_list<int> frontList; 
+    std::forward_list<int> otherList;
+
+    for (int x : lst) {
+        if (x == value) {
+            frontList.push_front(x);
+        }
+        else {
+            otherList.push_front(x);
+        }
+    }
+
+    frontList.reverse();
+    otherList.reverse();
+
+    frontList.splice_after(frontList.before_begin(), otherList);
+
+    lst = std::move(frontList);
+}
+
+int main() {
+    std::forward_list<int> fl = {1, 3, 2, 3, 4, 3};
+    moveElementsToFront(fl, 3);
+
+    std::cout << "Result: ";
+    for (int x : fl) {
+        std::cout << x << " ";
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
