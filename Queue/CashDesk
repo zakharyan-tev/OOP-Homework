@@ -1,0 +1,46 @@
+#include <iostream>
+#include <queue>
+#include <string>
+
+class CashDesk {
+private:
+    std::queue<std::string> customers;
+
+public:
+    void addCustomer(const std::string& name) {
+        customers.push(name);
+    }
+
+    void serve() {
+        if (!customers.empty()) {
+            std::cout << "Serving: " << customers.front() << std::endl;
+            customers.pop();
+        } else {
+            std::cout << "No customers to serve." << std::endl;
+        }
+    }
+
+    void show() const {
+        std::queue<std::string> temp = customers; // make a copy to iterate
+        std::cout << "Queue: ";
+        if (temp.empty()) {
+            std::cout << "(empty)";
+        } else {
+            while (!temp.empty()) {
+                std::cout << temp.front();
+                temp.pop();
+                if (!temp.empty()) std::cout << " ";
+            }
+        }
+        std::cout << std::endl;
+    }
+};
+
+int main() {
+    CashDesk desk;
+    desk.addCustomer("Alice");
+    desk.addCustomer("Bob");
+    desk.serve();
+    desk.show();
+    return 0;
+}
