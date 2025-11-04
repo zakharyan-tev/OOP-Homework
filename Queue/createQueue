@@ -1,0 +1,20 @@
+#include <iostream>
+#include <queue>
+
+void createQueue(int N) {
+    std::queue<int> q;
+    for (int i = 1; i <= N; ++i) {
+        q.push(i);
+    }
+    
+    while (!q.empty()) {
+        std::cout << q.front() << " ";
+        q.pop();
+    }
+    std::cout << std::endl;
+}
+
+int main() {
+    createQueue(5);
+    return 0;
+}
