@@ -1,0 +1,32 @@
+#include <iostream>
+#include <deque>
+
+void printDeque(const std::deque<int>& dq) {
+    for (int x : dq) std::cout << x << " ";
+    std::cout << std::endl;
+}
+
+void removeFromBothEnds(std::deque<int>& dq, int K) {
+    for (int i = 0; i < K; ++i) {
+        if (dq.empty()) break;
+
+        dq.pop_front();
+        std::cout << "After removing from front (" << dq.size() << " elements): ";
+        printDeque(dq);
+
+        if (dq.empty()) break;
+
+        dq.pop_back();
+        std::cout << "After removing from back (" << dq.size() << " elements): ";
+        printDeque(dq);
+    }
+}
+
+int main() {
+    std::deque<int> d = {1, 2, 3, 4, 5, 6};
+    removeFromBothEnds(d, 2);
+
+    std::cout << "Final deque: ";
+    printDeque(d);
+    return 0;
+}
