@@ -1,0 +1,43 @@
+#include <iostream>
+#include <deque>
+
+template <typename T>
+void rotateDeque(std::deque<T>& dq, int K) {
+    if (dq.empty()) return;
+
+    int n = dq.size();
+    K %= n;
+    if (K == 0) return;
+
+    if (K > 0) {
+        for (int i = 0; i < K; ++i) {
+            T value = dq.back();
+            dq.pop_back();
+            dq.push_front(value);
+        }
+    } else {
+        for (int i = 0; i < -K; ++i) {
+            T value = dq.front();
+            dq.pop_front();
+            dq.push_back(value);
+        }
+    }
+}
+
+template <typename T>
+void printDeque(const std::deque<T>& dq) {
+    for (const T& x : dq) std::cout << x << " ";
+    std::cout << std::endl;
+}
+
+int main() {
+    std::deque<int> d = {1, 2, 3, 4, 5};
+
+    rotateDeque(d, 2);
+    printDeque(d);  // Output: 4 5 1 2 3
+
+    rotateDeque(d, -1);
+    printDeque(d);  // Output: 5 1 2 3 4
+
+    return 0;
+}
