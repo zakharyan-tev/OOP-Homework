@@ -1,0 +1,34 @@
+#include <iostream>
+#include <forward_list>
+
+int removeAllOccurrences(std::forward_list<int>& lst, int value) {
+    int count = 0;
+    auto prev = lst.before_begin();
+    auto curr = lst.begin();
+
+    while (curr != lst.end()) {
+        if (*curr == value) {
+            curr = lst.erase_after(prev); 
+            ++count;
+        } else {
+            prev = curr;
+            ++curr;
+        }
+    }
+    return count;
+}
+
+int main() {
+    std::forward_list<int> fl = {1, 2, 3, 2, 4, 2};
+    int removed = removeAllOccurrences(fl, 2);
+
+    std::cout << "Elements removed: " << removed << std::endl;
+
+    std::cout << "After removing: ";
+    for (int x : fl) {
+        std::cout << x << " ";
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
