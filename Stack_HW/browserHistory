@@ -1,0 +1,63 @@
+#include <iostream>
+#include <stack>
+#include <string>
+
+class BrowserHistory {
+private:
+    std::stack<std::string> backStack;
+    std::stack<std::string> forwardStack;
+
+public:
+    void visit(const std::string& url) {
+        while (!forwardStack.empty()) {
+            forwardStack.pop();
+        }
+        backStack.push(url);
+    }
+
+    std::string back() {
+        if (backStack.empty()) {
+            return "No pages to go back to";
+        }
+
+        forwardStack.push(backStack.top());
+        backStack.pop();
+
+        if (!backStack.empty()) {
+            return backStack.top();
+        } else {
+            return "No pages to go back to";
+        }
+    }
+
+    std::string forward() {
+        if (forwardStack.empty()) {
+            return "No pages to go forward to";
+        }
+        
+        backStack.push(forwardStack.top());
+        forwardStack.pop();
+
+        return backStack.top();
+    }
+
+    std::string current() {
+        if (backStack.empty()) {
+            return "No current page";
+        }
+        return backStack.top();
+    }
+};
+
+int main() {
+    BrowserHistory bh;
+
+    bh.visit("google.com");
+    bh.visit("cppreference.com");
+
+    std::cout << bh.current() << std::endl;
+    std::cout << bh.back() << std::endl;
+    std::cout << bh.forward() << std::endl;
+
+    return 0;
+}
