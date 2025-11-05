@@ -1,0 +1,176 @@
+#include <iostream>
+#include <list>
+#include <iterator>
+
+template <typename T>
+class Zigzag {
+private:
+    std::list<T> l1;
+    std::list<T> l2;
+    bool trn = true;
+
+public:
+    using value_type = T;
+    using reference = T&;
+    using const_reference = const T&;
+    using size_type = std::size_t;
+    using iterator = typename std::list<T>::iterator;
+    using const_iterator = typename std::list<T>::const_iterator;
+
+    Zigzag() = default;
+
+    class iterator {
+    private:
+        typename std::list<T>::iterator it1, it1_end;
+        typename std::list<T>::iterator it2, it2_end;
+        bool trn;
+
+    public:
+        iterator(typename std::list<T>::iterator it1, typename std::list<T>::iterator it1_end,
+                 typename std::list<T>::iterator it2, typename std::list<T>::iterator it2_end, bool trn)
+            : it1(it1), it1_end(it1_end), it2(it2), it2_end(it2_end), trn(trn) {}
+
+        T& operator*() const {
+            return trn ? *it1 : *it2;
+        }
+
+        T* operator->() const {
+            return &(operator*());
+        }
+
+        iterator& operator++() {
+            if (trn) {
+                if (it1 != it1_end) ++it1;
+            } else {
+                if (it2 != it2_end) ++it2;
+            }
+            trn = !trn;
+
+            if (trn && it1 == it1_end) trn = false;
+            if (!trn && it2 == it2_end) trn = true;
+
+            return *this;
+        }
+
+        bool operator==(const iterator& other) const {
+            return it1 == other.it1 && it2 == other.it2 && trn == other.trn;
+        }
+
+        bool operator!=(const iterator& other) const {
+            return !(*this == other);
+        }
+    };
+
+    iterator begin() {
+        return iterator(l1.begin(), l1.end(), l2.begin(), l2.end(), true);
+    }
+
+    iterator end() {
+        return iterator(l1.end(), l1.end(), l2.end(), l2.end(), true);
+    }
+
+    void insert(const T& value) {
+        if (trn) {
+            l1.push_back(value);
+        } else {
+            l2.push_back(value);
+        }
+        trn = !trn;
+    }
+
+    void erase(iterator pos) {
+        T val = *pos;
+        auto it = std::find(l1.begin(), l1.end(), val);
+        if (it != l1.end()) {
+            l1.erase(it);
+        } else {
+            it = std::find(l2.begin(), l2.end(), val);
+            if (it != l2.end()) {
+                l2.erase(it);
+            }
+        }
+    }
+
+    iterator find(const T& value) {
+        for (auto it = begin(); it != end(); ++it) {
+            if (*it == value) return it;
+        }
+        return end();
+    }
+
+    size_type size() const {
+        return l1.size() + l2.size();
+    }
+
+    bool empty() const {
+        return l1.empty() && l2.empty();
+    }
+};
+
+template <typename T>
+Zigzag<T> merge(const Zigzag<T>& a, const Zigzag<T>& b) {
+    Zigzag<T> result;
+
+    auto it_a1 = a.l1.begin(), it_a2 = a.l2.begin();
+    auto it_b1 = b.l1.begin(), it_b2 = b.l2.begin();
+
+    bool trn_a = true, trn_b = true;
+    
+    while (it_a1 != a.l1.end() || it_a2 != a.l2.end() || it_b1 != b.l1.end() || it_b2 != b.l2.end()) {
+        if (trn_a && it_a1 != a.l1.end()) {
+            result.insert(*it_a1);
+            ++it_a1;
+        } else if (!trn_a && it_a2 != a.l2.end()) {
+            result.insert(*it_a2);
+            ++it_a2;
+        }
+
+        if (trn_b && it_b1 != b.l1.end()) {
+            result.insert(*it_b1);
+            ++it_b1;
+        } else if (!trn_b && it_b2 != b.l2.end()) {
+            result.insert(*it_b2);
+            ++it_b2;
+        }
+
+        trn_a = !trn_a;
+        trn_b = !trn_b;
+    }
+
+    return result;
+}
+
+int main() {
+    Zigzag<int> a, b;
+
+    a.insert(1);
+    a.insert(3);
+    a.insert(5);
+
+    b.insert(2);
+    b.insert(4);
+    b.insert(6);
+    b.insert(8);
+
+    std::cout << "Container a: ";
+    for (auto it = a.begin(); it != a.end(); ++it) {
+        std::cout << *it << " ";
+    }
+    std::cout << "\n";
+
+    std::cout << "Container b: ";
+    for (auto it = b.begin(); it != b.end(); ++it) {
+        std::cout << *it << " ";
+    }
+    std::cout << "\n";
+
+    Zigzag<int> merged = merge(a, b);
+
+    std::cout << "Merged container: ";
+    for (auto it = merged.begin(); it != merged.end(); ++it) {
+        std::cout << *it << " ";
+    }
+    std::cout << "\n";
+
+    return 0;
+}
