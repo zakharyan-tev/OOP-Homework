@@ -1,0 +1,28 @@
+#include <iostream>
+#include <stack>
+
+void decimalToBinary(int n) {
+    std::stack<int> s;
+    while (n > 0) {
+        s.push(n % 2);
+        n = n / 2;
+    }
+    if (s.empty()) {
+        std::cout << 0;
+        return;
+    }
+    while (!s.empty()) {
+        std::cout << s.top();
+        s.pop();
+    }
+    std::cout << std::endl;
+}
+
+int main() {
+    int n;
+    std::cin >> n;
+
+    decimalToBinary(n);
+
+    return 0;
+}
