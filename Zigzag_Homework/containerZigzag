@@ -1,0 +1,121 @@
+#include <iostream>
+#include <list>
+#include <algorithm>
+
+template <typename T>
+class Zigzag {
+private:
+  using value_type = T;
+  using reference = T&;
+  using const_reference = const T&;
+  using size_type = std::size_t;
+
+  std::list<T> l1;
+  std::list<T> l2;
+
+  bool trn = true;
+
+public:
+  Zigzag() = default;
+
+  class iterator {
+  private:
+    using list_iterator = typename std::list<T>::iterator;
+
+    list_iterator it1, it1_end;
+    list_iterator it2, it2_end;
+    bool trn;
+
+  public:
+    iterator(list_iterator it1, list_iterator it1_end,
+             list_iterator it2, list_iterator it2_end, bool trn)
+      : it1(it1), it1_end(it1_end), it2(it2), it2_end(it2_end), trn(trn) {}
+
+    T& operator*() const {
+      return trn ? *it1 : *it2;
+    }
+
+    T* operator->() const {
+      return &(operator*());
+    }
+
+    iterator& operator++() {
+      if(trn) {
+        if(it1 != it1_end) ++it1;
+      } else {
+        if(it2 != it2_end) ++it2;
+      }
+
+
+      trn = !trn;
+
+
+      if(trn && it1 == it1_end) trn = false;
+      if(!trn && it2 == it2_end) trn = true;
+
+      return *this;
+    }
+
+    bool operator==(const iterator& other) const {
+      return it1 == other.it1 && it2 == other.it2 && trn == other.trn;
+    }
+
+    bool operator!=(const iterator& other) const {
+      return !(*this == other);
+    }
+  };
+
+  iterator begin() {
+    return iterator(l1.begin(), l1.end(), l2.begin(), l2.end(), true);
+  }
+
+  iterator end() {
+    return iterator(l1.end(), l1.end(), l2.end(), l2.end(), true);
+  }
+
+  void insert(const T& val) {
+    if(trn) {
+      l1.push_back(val);
+    } else {
+      l2.push_back(val);
+    }
+    trn = !trn; 
+  }
+
+  void erase(iterator pos) {
+    T val = *pos;
+    auto it = std::find(l1.begin(), l1.end(), val);
+    if(it != l1.end()) l1.erase(it);
+    else {
+      it = std::find(l2.begin(), l2.end(), val);
+      if(it != l2.end()) l2.erase(it);
+    }
+  }
+
+  iterator find(const T& value) {
+    for(auto it = begin(); it != end(); ++it) {
+      if(*it == value) return it;
+    }
+    return end();
+  }
+
+  size_type size() const {
+    return l1.size() + l2.size();
+  }
+  bool empty() const {
+    return l1.empty() && l2.empty();
+  }
+};
+
+int main() {
+  Zigzag<int> z;
+  z.insert(1);
+  z.insert(2);
+  z.insert(3);
+  z.insert(4);
+
+  for(auto it = z.begin(); it != z.end(); ++it) {
+    std::cout << *it << " ";
+  }
+  std::cout << "\n"; 
+}
