@@ -1,0 +1,33 @@
+#include <iostream>
+#include <stack>
+#include <string>
+
+std::string removeAdjacentDuplicates(const std::string& s) {
+    std::stack<char> stk; 
+
+    for (char c : s) {
+        if (!stk.empty() && stk.top() == c) {
+            stk.pop(); 
+        } else {
+            stk.push(c);
+        }
+    }
+
+    std::string result;
+    while (!stk.empty()) {
+        result = stk.top() + result;
+        stk.pop();
+    }
+
+    return result;
+}
+
+int main() {
+    std::string s;
+    std::cin >> s;
+
+    std::string result = removeAdjacentDuplicates(s);
+    std::cout << result << std::endl;
+
+    return 0;
+}
