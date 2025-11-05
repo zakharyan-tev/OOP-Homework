@@ -1,0 +1,47 @@
+#include <iostream>
+#include <stack>
+#include <string>
+
+using namespace std;
+
+int main() {
+    stack<char> tower;
+    string command;
+    
+    while (true) {
+        cout << "Enter the command (add X, remove, show, exit): ";
+        getline(cin, command);
+
+        if (command.substr(0, 3) == "add") {
+            char block = command[4];
+            tower.push(block);
+        }
+        else if (command == "remove") {
+            if (!tower.empty()) {
+                tower.pop();
+            } else {
+                cout << "Tower empty!" << endl;
+            }
+        }
+        else if (command == "show") {
+            if (!tower.empty()) {
+                stack<char> temp = tower;
+                while (!temp.empty()) {
+                    cout << temp.top() << " ";
+                    temp.pop();
+                }
+                cout << endl;
+            } else {
+                cout << "Tower empty!" << endl;
+            }
+        }
+        else if (command == "exit") {
+            break;
+        }
+        else {
+            cout << "Wrong command." << endl;
+        }
+    }
+
+    return 0;
+}
