@@ -1,0 +1,33 @@
+#include <iostream>
+#include <stack>
+#include <string>
+
+bool isPalindrome(const std::string& str) {
+    std::stack<char> s;
+
+    for (char c : str) {
+        s.push(c);
+    }
+
+    for (char c : str) {
+        if (c != s.top()) {
+            return false;
+        }
+        s.pop();
+    }
+
+    return true;
+}
+
+int main() {
+    std::string s;
+    std::cin >> s;
+
+    if (isPalindrome(s)) {
+        std::cout << "YES\n";
+    } else {
+        std::cout << "NO\n";
+    }
+
+    return 0;
+}
