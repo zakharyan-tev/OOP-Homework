@@ -1,0 +1,26 @@
+#include <iostream>
+#include <stack>
+#include <string>
+
+void reverseString(const std::string& s) {
+    std::stack<char> stack;
+
+    for (char c : s) {
+        stack.push(c);
+    }
+
+    while (!stack.empty()) {
+        std::cout << stack.top();
+        stack.pop();
+    }
+    std::cout << std::endl;
+}
+
+int main() {
+    std::string s;
+    std::getline(std::cin, s);
+
+    reverseString(s);
+    
+    return 0;
+}
