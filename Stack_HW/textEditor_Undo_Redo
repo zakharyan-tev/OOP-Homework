@@ -1,0 +1,57 @@
+#include <iostream>
+#include <stack>
+#include <string>
+
+using namespace std;
+
+class TextEditor {
+private:
+    string text;
+    stack<string> undoStack;
+    stack<string> redoStack;
+
+public:
+    void type(const string& newText) {
+        undoStack.push(text);
+        while (!redoStack.empty()) {
+            redoStack.pop();
+        }
+        text += newText;
+    }
+
+    void undo() {
+        if (!undoStack.empty()) {
+            redoStack.push(text);
+            text = undoStack.top();
+            undoStack.pop();
+        }
+    }
+
+    void redo() {
+        if (!redoStack.empty()) {
+            undoStack.push(text);
+            text = redoStack.top();
+            redoStack.pop();
+        }
+    }
+
+    string getText() const {
+        return text;
+    }
+};
+
+int main() {
+    TextEditor editor;
+
+    editor.type("A");
+    editor.type("B");
+    cout << "Current Text: " << editor.getText() << endl;
+
+    editor.undo();
+    cout << "After Undo: " << editor.getText() << endl;
+
+    editor.redo();
+    cout << "After Redo: " << editor.getText() << endl;
+
+    return 0;
+}
