@@ -1,0 +1,52 @@
+#include <iostream>
+#include <stack>
+
+void removeMiddle(std::stack<int>& s) {
+    int n = s.size();
+    if (n == 0) {
+      return;
+    }
+
+    int mid = n / 2;
+    std::stack<int> temp;
+
+    for (int i = 0; i < mid; ++i) {
+        temp.push(s.top());  
+        s.pop(); 
+    }
+
+    s.pop();
+    while (!temp.empty()) {
+        s.push(temp.top());
+        temp.pop();
+    }
+}
+
+int main() {
+    std::stack<int> s;
+
+    s.push(1);
+    s.push(2);
+    s.push(3);
+    s.push(4);
+    s.push(5);
+
+    std::cout << "Original stack: ";
+    std::stack<int> tempStack = s;
+    while (!tempStack.empty()) {
+        std::cout << tempStack.top() << " ";
+        tempStack.pop();
+    }
+    std::cout << std::endl;
+
+    removeMiddle(s);
+
+    std::cout << "Modified stack: ";
+    while (!s.empty()) {
+        std::cout << s.top() << " ";
+        s.pop();
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
