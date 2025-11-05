@@ -1,0 +1,37 @@
+#include <iostream>
+#include <forward_list>
+using namespace std;
+
+void rearrange_list(forward_list<int>& lst) {
+    forward_list<int> even, odd;
+
+    for (int x : lst) {
+        if (x % 2 == 0) {
+            even.push_front(x);
+        } else {
+            odd.push_front(x);
+        }
+    }
+
+    even.reverse();
+    odd.reverse();
+    even.splice_after(even.before_begin(), odd);
+
+    lst = move(even);
+}
+
+int main() {
+    forward_list<int> lst = {1, 2, 3, 2, 1};
+
+    cout << "Original list: ";
+    for (int x : lst) cout << x << " ";
+    cout << "\n";
+
+    rearrange_list(lst);
+
+    cout << "Rearranged list: ";
+    for (int x : lst) cout << x << " ";
+    cout << "\n";
+
+    return 0;
+}
