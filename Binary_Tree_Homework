@@ -1,0 +1,256 @@
+#include <iostream>
+#include <queue>
+
+struct TreeNode {
+	int data;
+	TreeNode* left;
+	TreeNode* right;
+
+	explicit TreeNode(int val) : data(val), left(nullptr), right(nullptr) {}
+};
+
+int countNodes(TreeNode* root) {
+	std::queue <TreeNode*> q;
+	if(!root) {
+		return 0;
+	}
+	q.push(root);
+	int count = 0;
+	while(!q.empty()) {
+		auto current = q.front();
+		q.pop();
+		count++;
+		if(current->left) {
+			q.push(current->left);
+		}
+		if(current->right) {
+			q.push(current->right);
+		}
+	}
+	return count;
+}
+
+int treeHeight(TreeNode* root) {
+	if (root == nullptr) {
+		return 0;
+	}
+
+	int leftHeight = treeHeight(root->left);
+	int rightHeight = treeHeight(root->right);
+
+	return (1 + std::max(leftHeight, rightHeight));
+}
+
+int countLeaves(TreeNode* root) {
+	if (root == nullptr) {
+		return 0;
+	}
+	if(root->left == nullptr && root->right == nullptr) {
+		return 1;
+	}
+	return (countLeaves(root -> left) + countLeaves(root -> right));
+}
+
+void preorder(TreeNode* root) {
+	if(root == nullptr) {
+		return;
+	}
+	std::cout << root->data << " ";
+	preorder(root->left);
+	preorder(root->right);
+}
+
+void inorder(TreeNode* root) {
+	if(root == nullptr) {
+		return;
+	}
+	inorder(root->left);
+	std::cout << root->data << " ";
+	inorder(root->right);
+}
+
+void postorder(TreeNode* root) {
+    if(root == nullptr) {
+		return;
+	}
+	postorder(root->left);
+	postorder(root->right);
+	std::cout << root->data << " ";
+}
+
+void levelOrder(TreeNode* root){
+   std::queue <TreeNode*> q;
+	if(!root) {
+		return;
+	}
+	q.push(root);
+	while(!q.empty()) {
+		auto current = q.front();
+		std::cout << current->data;
+		q.pop();
+		
+		if(current->left) {
+			q.push(current->left);
+		}
+		if(current->right) {
+			q.push(current->right);
+		}
+	}
+}
+
+int sumNodes(TreeNode* root){
+   std::queue <TreeNode*> q;
+   int sum = 0;
+	if(!root) {
+		return 0;
+	}
+	q.push(root);
+	while(!q.empty()) {
+		auto current = q.front();
+		sum += current->data;
+		q.pop();
+		
+		if(current->left) {
+			q.push(current->left);
+		}
+		if(current->right) {
+			q.push(current->right);
+		}
+	}
+	return sum;
+}
+
+int findMax(TreeNode* root){
+   std::queue <TreeNode*> q;
+	if(!root) {
+		return 0;
+	}
+	int max = root->data;
+	q.push(root);
+	while(!q.empty()) {
+		auto current = q.front();
+		if (current->data >= max){
+		    max = current->data;
+		}
+		q.pop();
+		
+		if(current->left) {
+			q.push(current->left);
+		}
+		if(current->right) {
+			q.push(current->right);
+		}
+	}
+	return max;
+}
+
+int findMin(TreeNode* root){
+   std::queue <TreeNode*> q;
+	if(!root) {
+		return 0;
+	}
+	int min = root->data;
+	q.push(root);
+	while(!q.empty()) {
+		auto current = q.front();
+		if (current->data <= min){
+		    min = current->data;
+		}
+		q.pop();
+		
+		if(current->left) {
+			q.push(current->left);
+		}
+		if(current->right) {
+			q.push(current->right);
+		}
+	}
+	return min;
+}
+
+bool areIdentical(TreeNode* root1, TreeNode* root2) {
+	if (root1 == nullptr && root2 == nullptr) {
+		return true;
+	}
+	if (root1 == nullptr || root2 == nullptr) {
+		return false;
+	}
+	return (root1->data == root2->data) &&
+		   areIdentical(root1->left, root2->left) &&
+		   areIdentical(root1->right, root2->right);
+}
+
+int countNodesAtDepth(TreeNode* root, int k) {
+	if (root == nullptr) {
+		return 0;
+	}
+	if (k == 1) {
+		return 1;
+	}
+	return countNodesAtDepth(root->left, k - 1) + countNodesAtDepth(root->right, k - 1);
+}
+
+void mirrorTree(TreeNode* root) {
+	if (root == nullptr) {
+		return;
+	}
+
+	std::swap(root->left, root->right);
+
+	mirrorTree(root->left);
+	mirrorTree(root->right);
+}
+
+
+
+int main() {
+	TreeNode* root = new TreeNode(1);
+	root->left = new TreeNode(2);
+	root->right = new TreeNode(3);
+	root->left->left = new TreeNode(4);
+	root->left->right = new TreeNode(5);
+	
+	std::cout << "Inorder: ";
+	inorder(root);
+	
+	std::cout << "\nPostorder: ";
+	postorder(root);
+	
+	std::cout << "\nPreorder: ";
+	preorder(root);
+	
+	std::cout << "\nCount: " << countNodes(root) << std::endl;
+	std::cout << "Height of tree: " << treeHeight(root) << std::endl;
+	std::cout << "Count of leaves: "<< countLeaves(root) << std::endl;
+    std::cout << "Sum: " << sumNodes(root) << std::endl;
+    std::cout << "Max element: " << findMax(root) << std::endl;
+    std::cout << "Min element: " << findMin(root) << std::endl;
+	std::cout << "Order: ";
+    levelOrder(root);
+    
+    TreeNode* tree1 = new TreeNode(1);
+	tree1->left = new TreeNode(2);
+	tree1->right = new TreeNode(3);
+
+	TreeNode* tree2 = new TreeNode(1);
+	tree2->left = new TreeNode(2);
+	tree2->right = new TreeNode(3);
+
+	bool identical = areIdentical(tree1, tree2);
+	std::cout << "\nIdentical: " << std::boolalpha << identical << std::endl;
+	
+	int count = countNodesAtDepth(root, 3);
+	std::cout << "Count at depth 3: " << count << std::endl; 
+	
+	std::cout << "Before mirror: ";
+	preorder(root);
+	std::cout << std::endl;
+
+	mirrorTree(root);
+
+	std::cout << "After mirror: ";
+	preorder(root);
+	std::cout << std::endl;
+	
+	return 0;
+}
